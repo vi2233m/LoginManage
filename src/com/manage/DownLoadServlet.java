@@ -29,7 +29,7 @@ public class DownLoadServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		//response.setHeader("Content-Disposition", "attachement;filename='timg.jpg'");
-		System.out.print("testgithub");
+		System.out.print("testgithub_testyes");
 	}
 
 	/**
