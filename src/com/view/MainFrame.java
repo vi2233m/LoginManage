@@ -37,10 +37,10 @@ public class MainFrame extends HttpServlet {
 		out.print("<h1>下载页面</h1><br/>");
 		out.print("<p>【timg.jpg】 ");
 		out.print("<form action='/LoginManage/DownLoadServlet>");
-		out.print(" <input type='submit' value='点击下载'/>");
+		out.print(" <input type='submit' value='点击下载' />");
 		out.print("<form />");
 		out.print("</p>");
-		out.print("<p>【timg1.jpg】 <input type='submit' value='点击下载'></p>");
+		out.print("<p>【timg1.jpg】 <a href='/LoginManage/DownLoadServlet?filename=timg1.jpg'>点击下载</a></p>");
 		out.print("<a href='/LoginManage/LoginServlet'>返回登录页面</a>");
 		
 	}

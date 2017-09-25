@@ -1,6 +1,9 @@
 package com.manage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,8 +31,21 @@ public class DownLoadServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		//response.setHeader("Content-Disposition", "attachement;filename='timg.jpg'");
-		System.out.print("testgithub_testyes");
+		response.setHeader("Content-Disposition", "attachment;filename='Download/timg1.jpg'");
+		
+		String path = "/Download/timg1.jpg" ;
+		FileInputStream fis = new FileInputStream(path);
+		
+		byte buff[] = new byte[1024];
+		int len = 0;
+		OutputStream os = response.getOutputStream();
+		while ((len = fis.read(buff)) > 0) {
+			os.write(buff);
+			
+		}
+		os.close();
+		fis.close();
+		//System.out.print("testgithub_testyes");
 	}
 
 	/**
