@@ -43,7 +43,7 @@ public class DownLoadServlet extends HttpServlet {
 			path = this.getServletContext().getRealPath("/images/"+filename);
 			System.out.print("timgµÄpath£º"+path);
 		}else{
-			path = "D:/apache-tomcat-8.5.20/webapps/LoginManage/Download/timg1.jpg";
+			path = "E:/apache-tomcat-8.5.20/webapps/LoginManage/Download/timg1.jpg";
 		}
 		
 		FileInputStream fis = new FileInputStream(path);
