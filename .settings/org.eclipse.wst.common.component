@@ -2,7 +2,7 @@
     <wb-module deploy-name="LoginManage">
         <wb-resource deploy-path="/" source-path="/WebRoot" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="LoginManage"/>
         <property name="java-output-path" value="/LoginManage/WebRoot/WEB-INF/classes"/>
+        <property name="context-root" value="/LoginManage3"/>
     </wb-module>
 </project-modules>
