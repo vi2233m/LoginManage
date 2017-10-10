@@ -4,7 +4,10 @@ import java.util.ArrayList;
 //import java.awt.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,14 +18,56 @@ import com.mysql.jdbc.ResultSetMetaData;
 
 public class SqlHelper {
 	//四大金刚
-	String driver = "com.mysql.jdbc.Driver";
-	String url = "jdbc:mysql://localhost:3306/test";
-	String username = "root";
-	String password = "123456";
+//	String driver = "com.mysql.jdbc.Driver";
+//	String url = "jdbc:mysql://localhost:3306/test";
+//	String username = "root";
+//	String password = "123456";
+	public static String driver;
+	public static String url;
+	public static String username;
+	public static String password;
+	
+	//读取配置文件
+	static {
+		Properties prop = new Properties();
+		
+		InputStream is = SqlHelper.class.getClassLoader().getResourceAsStream("com/util/db.properties");
+		try {
+			prop.load(is);
+			//is.close();
+			
+            // 获取驱动
+            driver = prop.getProperty("jdbc.driver");
+            // 获取地址
+            url = prop.getProperty("jdbc.url");
+            // 获取用户名
+            username = prop.getProperty("jdbc.user");
+            // 获取密码
+            password = prop.getProperty("jdbc.password");
+            
+            is.close();
+            // 注册驱动
+            try {
+				Class.forName(driver);
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
+            //System.out.println("获取配置文件的数据为："+ url + username + password);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	//三剑客
 	Connection ct = null;
 	PreparedStatement ps = null;
 	ResultSet rs = null;
+	
 	public Connection getCt() {
 		return ct;
 	}
@@ -49,15 +94,16 @@ public class SqlHelper {
 	
 	//连接数据库
 	public Connection getConnection(){
-		try {
-			Class.forName(driver);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			Class.forName(driver);
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		try {
 			ct = (Connection) DriverManager.getConnection(url,username,password);
+			//System.out.println("获取配置文件的数据为："+ url + username + password);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
