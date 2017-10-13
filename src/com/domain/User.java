@@ -2,7 +2,7 @@ package com.domain;
 
 public class User {
 
-		public static int getId() {
+	public static int getId() {
 		return id;
 	}
 	public static void setId(int id) {
@@ -32,7 +32,15 @@ public class User {
 	public static void setUser_school(String user_school) {
 		User.user_school = user_school;
 	}
+	
+	public static String getUser_password() {
+		return user_password;
+	}
+	public static void setUser_password(String user_password) {
+		User.user_password = user_password;
+	}
 		public static int id= 1;
+		public static String user_password = null;
 		public static String user_name = null;
 		public static String user_email = null;
 		public static String user_company = null;

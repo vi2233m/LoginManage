@@ -45,7 +45,6 @@ public class SqlHelper {
             // »ñÈ¡ÃÜÂë
             password = prop.getProperty("jdbc.password");
             
-            is.close();
             // ×¢²áÇý¶¯
             try {
 				Class.forName(driver);
@@ -59,6 +58,13 @@ public class SqlHelper {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			try {
+				is.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -158,10 +164,11 @@ public class SqlHelper {
 		try{
 			this.getConnection();
 			ps = (PreparedStatement) ct.prepareStatement(sql);
-			
+			System.out.println("==========>>>"+ sql);
 			if (params != null){
 				for(int i = 0; i< params.length; i++){
-					ps.setObject(i+1, params[i]+"");
+					ps.setObject(i+1, params[i]);
+					System.out.println(">>>>>>>>>>"+params[i]);
 				}
 			}
 			  					
