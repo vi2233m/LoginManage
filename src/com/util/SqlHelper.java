@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.List;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +27,8 @@ public class SqlHelper {
 	public static String url;
 	public static String username;
 	public static String password;
+	
+	private static SqlHelper per = null;
 	
 	//读取配置文件
 	static {
@@ -68,6 +71,15 @@ public class SqlHelper {
 		}
 		
 	}
+	
+    public static SqlHelper getInstance() {
+        if (per == null) {
+            per = new SqlHelper();
+            //per.registeredDriver();
+        }
+        return per;
+    }
+	
 	
 	//三剑客
 	Connection ct = null;
@@ -164,11 +176,11 @@ public class SqlHelper {
 		try{
 			this.getConnection();
 			ps = (PreparedStatement) ct.prepareStatement(sql);
-			System.out.println("==========>>>"+ sql);
+			//System.out.println("==========>>>"+ sql);
 			if (params != null){
 				for(int i = 0; i< params.length; i++){
 					ps.setObject(i+1, params[i]);
-					System.out.println(">>>>>>>>>>"+params[i]);
+					//System.out.println(">>>>>>>>>>"+params[i]);
 				}
 			}
 			  					
@@ -203,6 +215,48 @@ public class SqlHelper {
 		
 		return null;		
 	}
+	
+	
+    /**
+     * jdbc的封装可以用反射机制来封装,把从数据库中获取的数据封装到一个类的对象里
+     * 
+     * @param sql
+     * @param params
+     * @param cls
+     * @return
+     * @throws Exception
+     */
+    public <T> List<T> executeQueryByRef(String sql, List<Object> params,
+            Class<T> cls) throws Exception {
+        List<T> list = new ArrayList<T>();
+        int index = 1;
+        ps = (PreparedStatement) ct.prepareStatement(sql);
+        if (params != null && !params.isEmpty()) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(index++, params.get(i));
+            }
+        }
+        rs = ps.executeQuery();
+        ResultSetMetaData metaData = (ResultSetMetaData) rs.getMetaData();
+        int cols_len = metaData.getColumnCount();
+        while (rs.next()) {
+            T resultObject = cls.newInstance();  // 通过反射机制创建实例
+            for (int i = 0; i < cols_len; i++) {
+                String cols_name = metaData.getColumnName(i + 1);
+                Object cols_value = rs.getObject(cols_name);
+                if (cols_value == null) {
+                    cols_value = "";
+                }
+                Field field = cls.getDeclaredField(cols_name);
+                field.setAccessible(true); // 打开javabean的访问private权限
+                field.set(resultObject, cols_value);
+            }
+            list.add(resultObject);
+        }
+        return list;
+
+    }
+	
 	
 	 /**
      * 执行更新

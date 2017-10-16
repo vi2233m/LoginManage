@@ -41,11 +41,11 @@ public class LoginClServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		String uid = request.getParameter("username");
 		String passwd = request.getParameter("password");	
-		System.out.println("uname="+uid+" passwd=" +passwd );
+		System.out.println("登录用id = "+uid+" 登录用户密码 = " +passwd );
 
 //版本3.0， 通过MVC模式及数据库工具类改造，验证用户及密码
 		User user = new User();
-		user.setId(Integer.parseInt(uid));
+		user.setUser_id(Integer.parseInt(uid));
 		user.setUser_password(passwd);
 		
 		UserServer userserver = new UserServer();
@@ -54,7 +54,7 @@ public class LoginClServlet extends HttpServlet {
 
 		}else{
 			System.out.println("用户名或密码错误");
-			request.setAttribute("error", "用户名或密码错误");
+			request.setAttribute("error", "erroruser");
 			request.getRequestDispatcher("/LoginServlet").forward(request, response);
 		}
 		

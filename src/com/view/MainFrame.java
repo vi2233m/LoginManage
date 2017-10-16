@@ -5,7 +5,9 @@ import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -45,14 +47,16 @@ public class MainFrame extends HttpServlet {
 		//response.setHeader("Content-Disposition", "attachement;filename='timg.jpg'");
 		PrintWriter out = response.getWriter();
 		out.print("<h1>登录成功</h1>");
-		out.print("当前登录用户："+ "");
+		String uid = request.getParameter("username");
+		String userName = new UserServer().getLoginUsername(uid);
+		out.println("当前登录用户："+ userName); //根据用户ID，查找出用户名并显示，待实现。。。
 		out.print("<a href='/LoginManage3/LoginServlet'>返回登录页面</a>");
 		out.print("<hr></hr>");
 		//out.print("<p>【timg.jpg】 <a href='/LoginManage/DownLoadServlet?filename=timg.jpg'>点击下载</a></p>");
 		//out.print("<p>【timg1.jpg】 <a href='/LoginManage/DownLoadServlet?filename=timg1.jpg'>点击下载</a></p>");
 		//表格显示数据库中的所有用户
 		int pageNow = 1; //第几页
-		int pageSize = 3;//每页显示几条记录
+		int pageSize = 5;//每页显示几条记录
 		int pageCount = 0;//总共有几页
 		int rowCount = 0;//数据库总共有多少行
 
@@ -71,106 +75,58 @@ public class MainFrame extends HttpServlet {
 		//System.out.print("========="+us.getUserInfo(pageNow, pageSize));			
 		out.print("<h2>用户列表</h2>");
 		out.print("<table width='500' border='2' color='green'>");
-		out.print("<tr><th>ID</th><th>用户名</th><th>邮箱</th><th>公司</th><th>毕业院校</th></tr>");
-		//Iterator<User> iter = us.getUserInfo(pageNow, pageSize).iterator();
-		for (User user : us.getUserInfo(pageNow, pageSize)){
+		out.print("<tr><th>ID</th><th>用户名</th><th>邮箱</th><th>公司</th><th>毕业院校</th><th>修改用户</th><th>删除用户</th></tr>");
+		List<User> al = us.getUserInfo(pageNow, pageSize);
+		//System.out.println("====用户列表==="+al.toString());
+		for (User user : al){
 			//User user = new User();
-			int id = us.getUserInfo(pageNow, pageSize).get(0).getId();
+			int id = user.getUser_id();
 			String name = user.getUser_name();
 			String email = user.getUser_email();
 			String company = user.getUser_company();
 			String school = user.getUser_school();
 			
-			//System.out.print("======"+us.getUserInfo(pageNow, pageSize));
-			out.print("<tr><td>"+id+"</td><td>"+name+"</td><td>"+email+"</td><td>"+company+"</td><td>"+school+"</td></tr>");
+			String del="1";
+			String upa="2";
+			String del_href= "javascript:if(confirm('确实要删除该用户吗?'))location='/LoginManage3/UserClServlet?id="
+					+ id
+					+ "&lb="
+					+ del +"'";
+			
+			//System.out.println("===aaa===="+del_href);
+			out.print("<tr><td>"+id+"</td><td>"+name+"</td><td>"+email+"</td><td>"+company+"</td><td>"+school+"</td>"
+					+ "<td>"+"<a href='/LoginManage3/UserClServlet?id="+id+"&lb="+upa+"'>修改</a>"+"</td>"
+					+ "<td>"+"<a href="+del_href+">删除</a>"+"</td></tr>");
+			//javascript:if(confirm('确实要删除该用户吗?'))location=/LoginManage3/UserClServlet?id="+id+"&lb="+del+"
 		}
 		out.print("</table>");	
 
 		
-//		//连接数据库查询数据
-//		Connection ct = null;
-//		PreparedStatement ps =null;
-//		ResultSet rs =null;
-//		
-//		try{
-//			Class.forName("com.mysql.jdbc.Driver");
-//			ct = (Connection) DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root","123456");			
-//			
-//			//获取数据库中的表格的数据
-//			ps = (PreparedStatement) ct.prepareStatement("select user_id,user_name,user_email,user_company,user_school from user limit ? , ?");
-//			ps.setObject(1, (pageNow-1)*pageSize);
-//			ps.setObject(2, pageSize);
-//			rs = ps.executeQuery();
-//						
-//			out.print("<h2>用户列表</h2>");
-//			out.print("<table width='500' border='2' color='green'>");
-//			out.print("<tr><th>ID</th><th>用户名</th><th>邮箱</th><th>公司</th><th>毕业院校</th></tr>");
-//			while (rs.next()){
-//				int id = rs.getInt(1);
-//				String name = rs.getString(2);
-//				String email = rs.getString(3);
-//				String company = rs.getString(4);
-//				String school = rs.getString(5);
-//				
-//				//System.out.print("======"+name);
-//				out.print("<tr><td>"+id+"</td><td>"+name+"</td><td>"+email+"</td><td>"+company+"</td><td>"+school+"</td></tr>");
-//			}
-//			out.print("</table>");
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}finally{
-//			if (rs != null){
-//				try {
-//					rs.close();
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				rs = null;
-//			}
-//			if (ps != null){
-//				try {
-//					ps.close();
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				ps = null;
-//			}
-//			if(ct != null){
-//				try {
-//					ct.close();
-//				} catch (SQLException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				ct = null;
-//			}
-//		}
 		//控制点击上一页
 		if (pageNow > 1){
-			out.println("<a href=/LoginManage3/MainFrame?pageNow="+(pageNow-1)
+			out.println("<a href=/LoginManage3/MainFrame?pageNow="+(pageNow-1) +"&username="+uid
 					+ ">上一页</a>");
 		}else{
-			out.println("<a href=/LoginManage3/MainFrame>上一页</a>");
+			out.println("<a href=/LoginManage3/MainFrame?username=" +uid
+					+ ">上一页</a>");
 		}
 		//控制点击具体页数
 		for(int i=pageNow;i<pageNow+3;i++){
 			if(i <= pageCount){
-				out.println("<a href=/LoginManage3/MainFrame?pageNow="+ i + ">"
+				out.println("<a href=/LoginManage3/MainFrame?pageNow="+ i + "&username="+uid + ">"
 					+ "<"+i+"></a>");
 			}else{
-				out.println("<a href=/LoginManage3/MainFrame?pageNow="+pageCount
+				out.println("<a href=/LoginManage3/MainFrame?pageNow="+pageCount +"&username="+uid 
 						+ "<"+i+"></a>");
 			}
 			//System.out.println("j===="+i);
 		}
 		//控制点击下一页
 		if(pageNow <pageCount){
-			out.print("<a href=/LoginManage3/MainFrame?pageNow="+(pageNow+1)
+			out.print("<a href=/LoginManage3/MainFrame?pageNow="+(pageNow+1) +"&username="+uid
 					+ ">下一页</a>");
 		}else{
-			out.println("<a href=/LoginManage3/MainFrame?pageNow="+pageCount
+			out.println("<a href=/LoginManage3/MainFrame?pageNow="+pageCount +"&username="+uid
 					+ ">下一页</a>");
 		}
 		

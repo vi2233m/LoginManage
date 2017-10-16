@@ -2,6 +2,7 @@ package com.service;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,42 @@ import com.util.SqlHelper;
 
 public class UserServer {
 		
+	//删除用户
+	public boolean DelUser(int id){
+		boolean flag = false;
+		String sql = "delete from user where user_id = "+ id;
+		
+		SqlHelper sh = SqlHelper.getInstance();
+		int res = sh.execUpdate(sql, null);
+		
+		if(res != 0){
+			flag = true;
+			//System.out.println("用户"+id+"已成功删除");
+		}
+//		else{
+//			System.out.println("未成功删除用户");
+//		}
+		
+		return flag;
+	}
+	
+	//获取当前登录用户名
+	public String getLoginUsername(String uid){
+		
+		SqlHelper sh =SqlHelper.getInstance();
+		String sql ="select user_name from user where user_id = ?";
+		Object []params = {uid};
+		//获取list map 的值
+		Object it  =    sh.execQuery(sql, params).get(0).get("user_name");
+		//对象转换为基本 数据类型时，要用toString()先转成字符串，再转换为需要的数据类型
+		String userName = it.toString();
 
+		return userName;		
+	}	
+	
+	
+	
+	
 	//利用数据库工具类改良版，获取总页数
 	public int getPageCount(int pageSize){
 
@@ -36,14 +72,14 @@ public class UserServer {
 		return pageCount;		
 	}
 	
-	
+	//验证登录用户是否存在
 	public boolean checkUser(User user){
 		boolean relly = false;
 		
 		SqlHelper sh = new SqlHelper();
 		//sh.getConnection();
 		String sql = "select * from user where user_id = ? and user_password = ?";
-		Object []params = {user.getId(),user.getUser_password()};
+		Object []params = {user.getUser_id(),user.getUser_password()};
 		List list = sh.execQuery(sql, params);
 		
 		if (list != null && !list.isEmpty()){
@@ -52,30 +88,34 @@ public class UserServer {
 		}
 		return relly;
 	}
-	
+
+	//分页，利用反射机制将数据库中查询用户数据写到User类中
 	public List<User> getUserInfo (int pageNow,int pageSize){
 		
 		String sql = "select user_id,user_name,user_email,user_company,user_school from user limit ?,?";
-		String limit1 = String.valueOf(((pageNow-1)*pageSize));
-		String limit2 = String.valueOf(pageSize);
+		int limit1 = (pageNow-1)*pageSize;
+		//String limit2 = String.valueOf(pageSize);
 		Object []params = {(pageNow-1)*pageSize , pageSize};
 		//System.out.print("++++++++>>>"+((pageNow-1)*pageSize) +pageSize);
 		
-		SqlHelper sh = new SqlHelper();
-		List<Map<String,Object>> list= sh.execQuery(sql, params);
-		ArrayList<User> userlist = new ArrayList<User>();
-		
-		for(Map<String,Object> us:list){
-			User user = new User();
-			user.setId(Integer.parseInt(us.get("user_id").toString()));
-			user.setUser_name(us.get("user_name").toString());
-			user.setUser_email(us.get("user_email").toString());
-			user.setUser_company(us.get("user_company").toString());
-			user.setUser_school(us.get("user_school").toString());
-			userlist.add(user);
+		//SqlHelper sh = new SqlHelper();
+		SqlHelper sh = SqlHelper.getInstance();
+		sh.getConnection();
+		List<User> reslist = new ArrayList<User>();
+        List<Object> list = new ArrayList<Object>();
+        for(int i=0;i<params.length;i++) {
+        	list.add(params[i]);
+        }
+        try {
+			reslist = sh.executeQueryByRef(sql,list,User.class);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			sh.close(sh.getRs(), sh.getPs(), sh.getCt());
 		}
-		System.out.print("=========="+userlist);	
-		return userlist;
+		return reslist;		
 	}
 	
 }

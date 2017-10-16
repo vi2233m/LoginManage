@@ -1,8 +1,6 @@
 package com.view;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,16 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class UpaUserInfoView
  */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/UpaUserInfoView")
+public class UpaUserInfoView extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LoginServlet() {
+    public UpaUserInfoView() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -30,17 +28,8 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		response.setCharacterEncoding("utf-8");
-		//response.setContentType("text/html;charset=utf-8");
-		PrintWriter out = response.getWriter();
-		out.println("<html>");
-		out.println("<h1>用户登录界面</h1>");
-		out.print("<form action='/LoginManage3/LoginClServlet' method='post'>");
-		out.println("用户名：<input type='text' name='username' /><br/>");
-		out.println("密　码：<input type='password' name='password' /><br/>");
-		out.println("<input type='submit' value='登录'><br/>");
-		out.println("</form>");
-		out.println("</html>");
+		System.out.println("已跳转到UpaUserInfoView 页面");
+		
 	}
 
 	/**
