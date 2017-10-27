@@ -32,14 +32,14 @@ public class UserClServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		
+		//PrintWriter out = response.getWriter();
 		String uid = request.getParameter("id");		
 		//Integer.parseInt(uid);
-		String lb = request.getParameter("lb");
+		String type = request.getParameter("type");
 		
 		//PrintWriter out = response.getWriter();
 		
-		if ("1".equals(lb)){
+		if ("1".equals(type)){
 			
 			UserServer us = new UserServer();
 			if(us.DelUser(Integer.parseInt(uid))){
@@ -49,7 +49,7 @@ public class UserClServlet extends HttpServlet {
 				System.out.println("未成功删除用户");
 				request.getRequestDispatcher("/MainFrame").forward(request, response);
 			}
-		}else if("2".equals(lb)){
+		}else if("2".equals(type)){
 			System.out.println("选择了修改用户 "+uid);
 			request.getRequestDispatcher("/UpaUserInfoView").forward(request, response);
 		}

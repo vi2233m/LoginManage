@@ -12,6 +12,12 @@ import com.util.SqlHelper;
 
 public class UserServer {
 		
+	//修改用户
+	public boolean UpaUser(User user){
+		
+		return true;
+	}
+	
 	//删除用户
 	public boolean DelUser(int id){
 		boolean flag = false;
@@ -23,11 +29,7 @@ public class UserServer {
 		if(res != 0){
 			flag = true;
 			//System.out.println("用户"+id+"已成功删除");
-		}
-//		else{
-//			System.out.println("未成功删除用户");
-//		}
-		
+		}		
 		return flag;
 	}
 	
@@ -90,7 +92,7 @@ public class UserServer {
 	}
 
 	//分页，利用反射机制将数据库中查询用户数据写到User类中
-	public List<User> getUserInfo (int pageNow,int pageSize){
+	public List<User> getUserList (int pageNow,int pageSize){
 		
 		String sql = "select user_id,user_name,user_email,user_company,user_school from user limit ?,?";
 		int limit1 = (pageNow-1)*pageSize;
@@ -111,6 +113,27 @@ public class UserServer {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			sh.close(sh.getRs(), sh.getPs(), sh.getCt());
+		}
+		return reslist;		
+	}
+	
+	//分页，利用反射机制将数据库中查询用户数据写到User类中
+	public List<User> getUserInfo (int id){
+		
+		String sql = "select user_name,user_password,user_email,user_company,user_school from user where user_id="+id;
+
+		//SqlHelper sh = new SqlHelper();
+		SqlHelper sh = SqlHelper.getInstance();
+		sh.getConnection();
+		List<User> reslist = new ArrayList<User>();
+       // List<Object> list = new ArrayList<Object>();
+        try {
+			reslist = sh.executeQueryByRef(sql,null,User.class);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
 			sh.close(sh.getRs(), sh.getPs(), sh.getCt());

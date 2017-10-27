@@ -14,9 +14,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
+import com.service.GetCookies;
 import com.service.UserServer;
 import com.util.SqlHelper;
 import com.domain.*;
@@ -46,11 +48,32 @@ public class MainFrame extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		//response.setHeader("Content-Disposition", "attachement;filename='timg.jpg'");
 		PrintWriter out = response.getWriter();
+		
+		//String uid = request.getParameter("username");
+		HttpSession session = request.getSession();
+		GetCookies getcookies = new GetCookies();
+		
 		out.print("<h1>登录成功</h1>");
-		String uid = request.getParameter("username");
-		String userName = new UserServer().getLoginUsername(uid);
-		out.println("当前登录用户："+ userName); //根据用户ID，查找出用户名并显示，待实现。。。
-		out.print("<a href='/LoginManage3/LoginServlet'>返回登录页面</a>");
+		String uid = (String) session.getAttribute("uid");
+		if (uid == null){
+			//response.sendRedirect("/LoginManage3/LoginServlet");
+			request.setAttribute("error", "对不起,请重新登录！");
+			request.getRequestDispatcher("/LoginServlet").forward(request, response);
+			//System.out.print("uid===null跳转");
+		}
+		if (uid != null){
+			String userName = new UserServer().getLoginUsername(uid);
+			out.println("当前登录用户："+ userName); //根据用户ID，查找出用户名并显示，待实现。。。
+		}
+		//设置cookie 记录上次登陆时间
+		//GetCookies getcookies = new GetCookies();
+		if (getcookies.getLastTime(request, response) == null){
+			out.println("欢迎首次登陆！</br>");
+		}else{
+			out.println("您上次登陆的时间为:"+getcookies.getLastTime(request, response)+"</br>");
+		}
+		//out.println("欢迎登陆！< /br>");
+		//out.print("<a href='/LoginManage3/LoginServlet'>返回登录页面</a>");
 		out.print("<hr></hr>");
 		//out.print("<p>【timg.jpg】 <a href='/LoginManage/DownLoadServlet?filename=timg.jpg'>点击下载</a></p>");
 		//out.print("<p>【timg1.jpg】 <a href='/LoginManage/DownLoadServlet?filename=timg1.jpg'>点击下载</a></p>");
@@ -76,7 +99,7 @@ public class MainFrame extends HttpServlet {
 		out.print("<h2>用户列表</h2>");
 		out.print("<table width='500' border='2' color='green'>");
 		out.print("<tr><th>ID</th><th>用户名</th><th>邮箱</th><th>公司</th><th>毕业院校</th><th>修改用户</th><th>删除用户</th></tr>");
-		List<User> al = us.getUserInfo(pageNow, pageSize);
+		List<User> al = us.getUserList(pageNow, pageSize);
 		//System.out.println("====用户列表==="+al.toString());
 		for (User user : al){
 			//User user = new User();
@@ -90,12 +113,12 @@ public class MainFrame extends HttpServlet {
 			String upa="2";
 			String del_href= "javascript:if(confirm('确实要删除该用户吗?'))location='/LoginManage3/UserClServlet?id="
 					+ id
-					+ "&lb="
+					+ "&type="
 					+ del +"'";
 			
 			//System.out.println("===aaa===="+del_href);
 			out.print("<tr><td>"+id+"</td><td>"+name+"</td><td>"+email+"</td><td>"+company+"</td><td>"+school+"</td>"
-					+ "<td>"+"<a href='/LoginManage3/UserClServlet?id="+id+"&lb="+upa+"'>修改</a>"+"</td>"
+					+ "<td>"+"<a href='/LoginManage3/UserClServlet?id="+id+"&type="+upa+"'>修改</a>"+"</td>"
 					+ "<td>"+"<a href="+del_href+">删除</a>"+"</td></tr>");
 			//javascript:if(confirm('确实要删除该用户吗?'))location=/LoginManage3/UserClServlet?id="+id+"&lb="+del+"
 		}
@@ -136,6 +159,7 @@ public class MainFrame extends HttpServlet {
 		
 		out.println("<p>跳转到第 <input id='PageNo' size='4'> 页 <input type='button' onclick='location.href=/LoginManage3/MainFrame?pageNow=2' value='GO'></p>");
 		
+		out.print("<a href='/LoginManage3/LoginServlet'>返回登录页面</a>");
 //		out.println("跳转到：<input type='text' width='10px' id='go' value="+pageNow+"></input>");
 //		out.print("<input name='pclog' type='button' value='GO' onClick='location.href=/LoginManage3/MainFrame?pageNow=2'/>"); 
 		
