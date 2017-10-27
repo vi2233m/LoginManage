@@ -67,10 +67,12 @@ public class MainFrame extends HttpServlet {
 		}
 		//设置cookie 记录上次登陆时间
 		//GetCookies getcookies = new GetCookies();
-		if (getcookies.getLastTime(request, response) == null){
+		if ( getcookies.getUid(request, response, uid) == null){
+			out.println("欢迎首次登陆！</br>");
+		}else if(getcookies.getLastTime(request, response,uid) == null){
 			out.println("欢迎首次登陆！</br>");
 		}else{
-			out.println("您上次登陆的时间为:"+getcookies.getLastTime(request, response)+"</br>");
+			out.println("您上次登陆的时间为:"+getcookies.getLastTime(request, response,uid)+"</br>");
 		}
 		//out.println("欢迎登陆！< /br>");
 		//out.print("<a href='/LoginManage3/LoginServlet'>返回登录页面</a>");

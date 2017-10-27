@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -42,10 +44,12 @@ public class LoginClServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		String uid = request.getParameter("username");
 		String passwd = request.getParameter("password");	
-		System.out.println("登录用id = "+uid+" 登录用户密码 = " +passwd );
+		System.out.println("登录用户id = "+uid+" 登录用户密码 = " +passwd );
 
+		Pattern pattern = Pattern.compile("[0-9]*"); 
+		Matcher isNum = pattern.matcher(uid);
 //版本3.0， 通过MVC模式及数据库工具类改造，验证用户及密码
-		if (uid != null){
+	if (uid != null && uid != "" && isNum.matches() && passwd !=null && passwd !=""){
 			User user = new User();
 			user.setUser_id(Integer.parseInt(uid));
 			user.setUser_password(passwd);
