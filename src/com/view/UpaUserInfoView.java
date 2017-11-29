@@ -42,14 +42,16 @@ public class UpaUserInfoView extends HttpServlet {
 		
 		//String type = request.getParameter("type");
 		String id = request.getParameter("id");
+		String upa = "22";
 		UserServer us = new UserServer();
 		List<User> al = us.getUserInfo(Integer.parseInt(id));		
 		
 		out.println("<h1>修改用户信息</h1>");
-		out.print("<form action='' method='post'>");
-		out.println("用  户  ID：<input type='text' name='uid' readonly unselectable='on' value="+id+"><br/>");
-		out.println("用  户  名：<input type='text' name='username' value="+al.get(0).getUser_name()+"><br/>");
-		out.println("密　　码：<input type='password' name='password' value="+al.get(0).getUser_password()+"><br/>");
+		out.print("<form action='/LoginManage3/UserClServlet?type="+upa
+				+ "' method='post'>");
+		out.println("用户　ID：<input type='text' name='uid' readonly unselectable='on' value="+id+"><br/>");
+		out.println("用户　名：<input type='text' name='username' value="+al.get(0).getUser_name()+"><br/>");
+		//out.println("密　　码：<input type='password' name='password' value="+al.get(0).getUser_password()+"><br/>");
 		out.println("邮　　箱：<input type='text' name='email' value="+al.get(0).user_email+"><br/>");
 		out.println("公　　司：<input type='text' name='company' value="+al.get(0).getUser_company()+"><br/>");
 		out.println("毕业院校：<input type='text' name='school' value="+al.get(0).getUser_school()+"><br/>");

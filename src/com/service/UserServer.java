@@ -14,8 +14,23 @@ public class UserServer {
 		
 	//修改用户
 	public boolean UpaUser(User user){
+		boolean flag = false;
+		int uid =  user.getUser_id();
+				
+		String sql = "update user set user_name=?, user_email=? ,user_company=?, user_school=? where user_id = " + uid;
+		String params[] = {
+				user.getUser_name(),
+				user.getUser_email(),
+				user.getUser_company(),
+				user.getUser_school()};
 		
-		return true;
+		SqlHelper sh = SqlHelper.getInstance();
+		int res = sh.execUpdate(sql, params);
+		if (res != 0){
+			flag = true;
+			System.out.println("更新成功");
+		}
+		return flag;
 	}
 	
 	//删除用户
@@ -32,6 +47,7 @@ public class UserServer {
 		}		
 		return flag;
 	}
+	
 	
 	//获取当前登录用户名
 	public String getLoginUsername(String uid){

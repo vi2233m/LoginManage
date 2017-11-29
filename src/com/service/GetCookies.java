@@ -61,7 +61,7 @@ public class GetCookies {
         boolean b = false;
         	
 		Cookie cookies[] = request.getCookies();
-		if (cookies != null){
+		if (cookies != null){			
 			for(int j=0; j<cookies.length; j++){
 				if ( cookies[j].getName().equals("cuid")){
 					cuid = cookies[j].getValue();
@@ -70,11 +70,17 @@ public class GetCookies {
 					break;
 				}				
 			}
-			if (cuid.equals(uid)){
-				b = true;
-				System.out.println("cuid====uid");
+			if (cuid != null){
+				if (cuid.equals(uid)){
+					b = true;
+					System.out.println("cuid====uid");
+				}
+			}else{
+				Cookie cookie2 = new Cookie("cuid",uid);
+				cookie2.setMaxAge(3600);
+				response.addCookie(cookie2);
+				System.out.println("创建cuid");
 			}
-			
 		}
 		//首次登录
 		if( !b){
